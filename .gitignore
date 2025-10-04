@@ -35,3 +35,13 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Gradle
+.gradle/
+build/
+out/
+
+
+# Environment files
+.env
+application-secrets.properties
