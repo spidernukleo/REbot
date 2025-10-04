@@ -26,8 +26,13 @@ public class TelegramController {
     public void onTelegramUpdate(@RequestBody Map<String, Object> update) {
         System.out.println("Arrivato update da tg");
         if(update.containsKey("message")){
-            System.out.println("Update contiene message");
-            //messageService.cazzoPalle();
+            @SuppressWarnings("unchecked")
+            Map<String, Object> message = (Map<String, Object>) update.get("message");
+            System.out.println("Message update contenente: " + message.get("text"));
+            messageService.handleMessage(message);
+        }
+        else{
+            System.out.println("Update non gestito: "+update.keySet());
         }
     }
 
