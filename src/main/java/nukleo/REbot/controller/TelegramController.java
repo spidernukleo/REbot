@@ -3,6 +3,7 @@ package nukleo.REbot.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import nukleo.REbot.model.ChatMemberUpdate;
+import nukleo.REbot.model.Message;
 import nukleo.REbot.service.ChatMemberService;
 import nukleo.REbot.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class TelegramController {
     @PostMapping("/bot-webhook")
     public void onTelegramUpdate(@RequestBody Map<String, Object> update) {
         if(update.containsKey("message")){
-            Map<String, Object> message = (Map<String, Object>) update.get("message");
+            Message message = objectMapper.convertValue(update.get("message").toString(), Message.class);
             messageService.handleMessage(message);
         }
         else if(update.containsKey("my_chat_member")){

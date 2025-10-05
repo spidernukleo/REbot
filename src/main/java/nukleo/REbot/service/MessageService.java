@@ -2,6 +2,7 @@ package nukleo.REbot.service;
 
 
 import lombok.AllArgsConstructor;
+import nukleo.REbot.model.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -16,35 +17,21 @@ public class MessageService {
     private JdbcTemplate jdbc;
     private final TelegramService telegramService;
 
-    private Long getChatId(Map<String, Object> message){
-        @SuppressWarnings("unchecked")
-        Map<String, Object> chat = (Map<String, Object>) message.get("chat");
-        return ((Number) chat.get("id")).longValue();
-    }
-
-    public void handleMessage(Map<String, Object> message) {
-        if (message.get("text") != null) {
-
-            for (Map.Entry<String, Object> entry : message.entrySet()) {
-                String key = entry.getKey();
-                Object value = entry.getValue();
-                System.out.println(key + " : " + (value != null ? value : ""));
-            }
-
+    public void handleMessage(Message message) {
+        if (message.getText() != null) {
             Map<String, Runnable> commands = new HashMap<>();
             commands.put("/topdaniele".toLowerCase(), () -> handleTop(message));
             commands.put("daniele".toLowerCase(), () -> handleDaniele(message)); //mappa con tutti i comandi e che funzione eseguire
 
-            commands.getOrDefault(((String) message.get("text")).toLowerCase(), () -> {
-            }).run(); //se non trovato non lanciare nulla
+            commands.getOrDefault(message.getText().toLowerCase(), () -> {}).run(); //se non trovato non lanciare nulla
         }
     }
 
-    public void handleTop(Map<String, Object> message){
-        telegramService.sendMessage(getChatId(message), "ecco la top");
+    public void handleTop(Message message) {
+        telegramService.sendMessage(message.getChat().getId(), "ecco la top");
     }
 
-    public void handleDaniele(Map<String, Object> message){
-        telegramService.sendMessage(getChatId(message), "sei diventato");
+    public void handleDaniele(Message message){
+        telegramService.sendMessage(message.getChat().getId(), "sei diventato");
     }
 }
