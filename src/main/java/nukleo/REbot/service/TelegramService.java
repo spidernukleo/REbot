@@ -10,20 +10,16 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
 public class TelegramService {
 
-    private final BotConfig botConfig;
     public final RestTemplate restTemplate = new RestTemplate();
-
-    private final String tgUrl = "https://api.telegram.org/bot"+botConfig.getBotToken();
-
+    public BotConfig botConfig;
 
     public void sendMessage(Long chatId, String text){
         Map<String, Object> req = Map.of(
                 "chat_id", chatId,
                 "text", text
         );
-        new RestTemplate().postForObject(tgUrl+"/sendMessage", req, String.class);
+        new RestTemplate().postForObject(botConfig.getTgUrl()+"/sendMessage", req, String.class);
     }
 }

@@ -10,6 +10,7 @@ public class BotConfig {
 
     private final String botToken;
     private final long botId;
+    private final String tgUrl;
 
     public BotConfig(){
         this.botToken = System.getenv("TELEGRAM_REBOT_TOKEN");
@@ -17,5 +18,6 @@ public class BotConfig {
             throw new IllegalStateException("Invalid bot token");
         }
         this.botId = Long.parseLong(botToken.split(":")[0]);
+        this.tgUrl = "https://api.telegram.org/bot" + botToken;
     }
 }

@@ -24,6 +24,13 @@ public class MessageService {
 
     public void handleMessage(Map<String, Object> message) {
         if (message.get("text") != null) {
+
+            for (Map.Entry<String, Object> entry : message.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                System.out.println(key + " : " + (value != null ? value : ""));
+            }
+
             Map<String, Runnable> commands = new HashMap<>();
             commands.put("/topdaniele".toLowerCase(), () -> handleTop(message));
             commands.put("daniele".toLowerCase(), () -> handleDaniele(message)); //mappa con tutti i comandi e che funzione eseguire

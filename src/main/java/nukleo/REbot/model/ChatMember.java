@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class ChatMember {
-        private ChatMemberUpdate.User user;
+        private User user;
         private String status;
 }
