@@ -45,3 +45,5 @@ out/
 # Environment files
 .env
 application-secrets.properties
+
+database.db

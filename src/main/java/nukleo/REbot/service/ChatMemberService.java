@@ -3,25 +3,27 @@ package nukleo.REbot.service;
 
 import lombok.AllArgsConstructor;
 import nukleo.REbot.model.ChatMemberUpdate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
+import nukleo.REbot.repository.DatabaseRepository;
 import org.springframework.stereotype.Service;
 
 
 @Service
 @AllArgsConstructor
 public class ChatMemberService {
-    @Autowired
-    private JdbcTemplate jdbc;
+
+    private DatabaseRepository databaseRepository;
     private final TelegramService telegramService;
 
     public void handleChat(ChatMemberUpdate member) {
+        String status = member.getNew_chat_member().getStatus();
+        if(status.equals("left") || status.equals("kicked")) return; //continue only if added
+
         if(member.getChat().getType().equals("channel")){
-            telegramService.leaveChat(member.getChat().getId());
+            telegramService.leaveChat(member.getChat().getId()); //leave if channel
             return;
         }
-        if (member.getNew_chat_member().getStatus().equals("member")) {
-            telegramService.sendMessage(member.getChat().getId(), "entrato con successo");
-        }
+
+        databaseRepository.addTable(member.getChat().getId());
+        telegramService.sendMessage(member.getChat().getId(), "Salve, scrivi daniele per diventare il re daniele del giorno");
     }
 }

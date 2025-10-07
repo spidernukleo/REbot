@@ -35,7 +35,8 @@ public class TelegramService {
         Map<String, Object> req = Map.of("chat_id", chatId);
         try{
             new RestTemplate().postForObject(botConfig.getTgUrl()+"/leaveChat", req, String.class);
-        }catch(Exception ignored){}
+        }
+        catch(Exception ignored){}
     }
 
 }

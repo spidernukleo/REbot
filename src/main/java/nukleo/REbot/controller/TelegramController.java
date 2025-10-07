@@ -33,12 +33,10 @@ public class TelegramController {
     @PostMapping("/bot-webhook")
     public void onTelegramUpdate(@RequestBody Map<String, Object> update) {
         if(update.containsKey("message")){
-            System.out.println("arrivato messaggio");
             Message message = objectMapper.convertValue(update.get("message"), Message.class);
             messageService.handleMessage(message);
         }
         else if(update.containsKey("my_chat_member")){
-            System.out.println("arrivato chat");
             ChatMemberUpdate member = objectMapper.convertValue(update.get("my_chat_member"), ChatMemberUpdate.class);
             chatMemberService.handleChat(member);
         }
