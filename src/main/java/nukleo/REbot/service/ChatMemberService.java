@@ -2,7 +2,6 @@ package nukleo.REbot.service;
 
 
 import lombok.AllArgsConstructor;
-import nukleo.REbot.model.ChatMember;
 import nukleo.REbot.model.ChatMemberUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,9 +15,13 @@ public class ChatMemberService {
     private JdbcTemplate jdbc;
     private final TelegramService telegramService;
 
-    @SuppressWarnings("unchecked")
     public void handleChat(ChatMemberUpdate member) {
-        ChatMember old = member.getOldChatMember();
-        ChatMember newM =  member.getNewChatMember();
+        if(member.getChat().getType().equals("channel")){
+            telegramService.leaveChat(member.getChat().getId());
+            return;
+        }
+        if (member.getNew_chat_member().getStatus().equals("member")) {
+            telegramService.sendMessage(member.getChat().getId(), "entrato con successo");
+        }
     }
 }

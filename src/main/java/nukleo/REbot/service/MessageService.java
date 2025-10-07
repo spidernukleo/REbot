@@ -27,6 +27,7 @@ public class MessageService {
         }
     }
 
+    //handle all commands
     public void handleTop(Message message) {
         telegramService.sendMessage(message.getChat().getId(), "ecco la top");
     }

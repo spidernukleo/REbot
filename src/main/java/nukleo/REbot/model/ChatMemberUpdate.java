@@ -6,6 +6,7 @@ import lombok.Data;
 public class ChatMemberUpdate {
     private Chat chat;
     private User from;
-    private ChatMember oldChatMember;
-    private ChatMember newChatMember;
+    private Long date;
+    private ChatMember old_chat_member;
+    private ChatMember new_chat_member;
 }

@@ -30,18 +30,16 @@ public class TelegramController {
         return "Bot is running!";
     }
 
-    @SuppressWarnings("unchecked")
     @PostMapping("/bot-webhook")
     public void onTelegramUpdate(@RequestBody Map<String, Object> update) {
         if(update.containsKey("message")){
-            Message message = objectMapper.convertValue(update.get("message").toString(), Message.class);
+            System.out.println("arrivato messaggio");
+            Message message = objectMapper.convertValue(update.get("message"), Message.class);
             messageService.handleMessage(message);
         }
         else if(update.containsKey("my_chat_member")){
-            ChatMemberUpdate member = objectMapper.convertValue(
-                    update.get("my_chat_member"),
-                    ChatMemberUpdate.class
-            );
+            System.out.println("arrivato chat");
+            ChatMemberUpdate member = objectMapper.convertValue(update.get("my_chat_member"), ChatMemberUpdate.class);
             chatMemberService.handleChat(member);
         }
     }
