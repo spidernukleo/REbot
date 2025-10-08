@@ -26,6 +26,22 @@ public class DatabaseRepository {
         }
     }
 
+    public boolean incrementPoints(Long chatId, Long userId, String userFirstName){
+        String tableName = "chat_"+chatId;
+        try{
+            String sql = "INSERT INTO \"" + tableName + "\" (userId, points, userFirstName) " +
+                    "VALUES (?, 1, ?) " +
+                    "ON CONFLICT (userId) DO UPDATE SET points = \"" + tableName + "\".points + 1, " +
+                    "userFirstName = EXCLUDED.userFirstName";
+            jdbc.update(sql, userId, userFirstName);
+            return true;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public List<TopRecord> getTopRecords(Long chatId){
         String tableName = "chat_"+chatId;
         try{

@@ -47,8 +47,7 @@ public class MessageService {
 
     public void handleTop(Message message) {
         if(message.getChat().getType().equals("private")) return;
-        //(redisRepository.canExecute(message.getChat().getId(), 20000))
-        if(true) {
+        if(redisRepository.canExecute(message.getChat().getId(), 20000)) {
             List<TopRecord> records = databaseRepository.getTopRecords(message.getChat().getId());
             String text="\uD83D\uDD1D || <b>CLASSIFICA DANIELI</b>:"+this.generateTop(records)+"\n\n<i>Per qualsiasi problema @nukleolimitatibot</i>";
             telegramService.sendMessage(message.getChat().getId(), text);
@@ -56,6 +55,17 @@ public class MessageService {
     }
 
     public void handleDaniele(Message message){
+        if(message.getChat().getType().equals("private")) return;
+        Long chatid = message.getChat().getId();
+        Long userId= message.getFrom().getId();
+        String userFirstName = message.getFrom().getFirst_name();
+        String king= redisRepository.getKing(chatid);
+        if(king!=null){
+            telegramService.sendMessage(message.getChat().getId(), "\uD83D\uDE2D || HEY\n\n\uD83D\uDC51 — "+king+" ha già preso il posto di Re Daniele di oggi");
+            return;
+        }
+        redisRepository.setKing(chatid, userFirstName);
+        databaseRepository.incrementPoints(chatid, userId, userFirstName);
         telegramService.sendMessage(message.getChat().getId(), "sei diventato");
     }
 
