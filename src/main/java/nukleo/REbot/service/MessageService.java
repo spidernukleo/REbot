@@ -66,7 +66,7 @@ public class MessageService {
         }
         redisRepository.setKing(chatid, userFirstName);
         databaseRepository.incrementPoints(chatid, userId, userFirstName);
-        telegramService.sendMessage(message.getChat().getId(), "sei diventato");
+        telegramService.sendMessage(message.getChat().getId(), "\uD83C\uDF89 || Complimenti!\n\n\uD83D\uDC51 — "+userFirstName+" sei il Re Daniele di oggi!");
     }
 
     public void handleTopWrap(Message message) {
