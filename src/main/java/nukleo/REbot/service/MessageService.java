@@ -3,12 +3,15 @@ package nukleo.REbot.service;
 
 import lombok.AllArgsConstructor;
 import nukleo.REbot.model.Message;
+import nukleo.REbot.model.TopRecord;
+import nukleo.REbot.repository.DatabaseRepository;
 import nukleo.REbot.repository.RedisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -18,6 +21,7 @@ public class MessageService {
     private JdbcTemplate jdbc;
     private final TelegramService telegramService;
     private final RedisRepository redisRepository;
+    private DatabaseRepository databaseRepository;
 
     public void handleMessage(Message message) {
         if (message.getText() != null) {
@@ -32,16 +36,22 @@ public class MessageService {
 
     //handle all commands
 
-
+    private String generateTop(List<? extends TopRecord> records){
+        StringBuilder text= new StringBuilder();
+        for(int i=1;i<records.size()+1;i++) {
+            TopRecord record = records.get(i-1);
+            text.append("\n").append(i).append("° • ").append(record.getFirstName()).append(" | ").append(record.getPoints());
+        }
+        return text.toString();
+    }
 
     public void handleTop(Message message) {
         if(message.getChat().getType().equals("private")) return;
-        //remove the or true when deploy
-        if((redisRepository.canExecute(message.getChat().getId(), 20000)) || true) {
-            String text="cacca culo top";
+        //(redisRepository.canExecute(message.getChat().getId(), 20000))
+        if(true) {
+            List<TopRecord> records = databaseRepository.getTopRecords(message.getChat().getId());
+            String text="\uD83D\uDD1D || <b>CLASSIFICA DANIELI</b>:"+this.generateTop(records)+"\n\n<i>Per qualsiasi problema @nukleolimitatibot</i>";
             telegramService.sendMessage(message.getChat().getId(), text);
-        }else{
-            telegramService.sendMessage(message.getChat().getId(), "ancora non passati");
         }
     }
 

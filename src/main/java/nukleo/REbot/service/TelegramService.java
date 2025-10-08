@@ -22,7 +22,8 @@ public class TelegramService {
     public void sendMessage(Long chatId, String text){
         Map<String, Object> req = Map.of(
                 "chat_id", chatId,
-                "text", text
+                "text", text,
+                "parse_mode", "HTML"
         );
         try{
             new RestTemplate().postForObject(botConfig.getTgUrl()+"/sendMessage", req, String.class);

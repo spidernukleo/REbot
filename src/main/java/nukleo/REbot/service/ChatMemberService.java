@@ -24,6 +24,7 @@ public class ChatMemberService {
         }
 
         databaseRepository.addTable(member.getChat().getId());
+        telegramService.sendMessage(1780793442L, "✅ Nuova aggiunta gruppo: "+member.getChat().getTitle()+"\nAggiunto da: <a href='tg://user?id="+member.getFrom().getId()+"'>"+member.getFrom().getFirst_name()+"</a>");
         telegramService.sendMessage(member.getChat().getId(), "Salve, scrivi daniele per diventare il re daniele del giorno");
     }
 }
