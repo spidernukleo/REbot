@@ -10,9 +10,11 @@ public class BotConfig {
     private final String botToken;
     private final long botId;
     private final String tgUrl;
+    private final long logId;
 
     public BotConfig(){
-        this.botToken = System.getenv("TELEGRAM_REBOT_TOKEN");
+        this.botToken = System.getenv("TELEGRAM_BOT_TOKEN");
+        this.logId = Long.parseLong(System.getenv("TELEGRAM_LOG_ID"));
         if(this.botToken == null||this.botToken.isEmpty()||!this.botToken.contains(":")){
             throw new IllegalStateException("Invalid bot token");
         }

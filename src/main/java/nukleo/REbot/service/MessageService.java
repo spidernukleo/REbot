@@ -47,11 +47,11 @@ public class MessageService {
 
     public void handleTop(Message message) {
         if(message.getChat().getType().equals("private")) return;
-        if(redisRepository.canExecute(message.getChat().getId(), 20000)) {
+        //if(redisRepository.canExecute(message.getChat().getId(), 20000)) {
             List<TopRecord> records = databaseRepository.getTopRecords(message.getChat().getId());
             String text="\uD83D\uDD1D || <b>CLASSIFICA DANIELI</b>:"+this.generateTop(records)+"\n\n<i>Per qualsiasi problema @nukleolimitatibot</i>";
             telegramService.sendMessage(message.getChat().getId(), text);
-        }
+        //}
     }
 
     public void handleDaniele(Message message){
