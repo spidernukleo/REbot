@@ -15,10 +15,14 @@ public class LogService {
     private final TelegramService telegramService;
     private final BotConfig botConfig;
 
-
+    private void sendLog(String text){
+        Long logId=botConfig.getLogId();
+        if(logId==null) return;
+        telegramService.sendMessage(logId, text);
+    }
 
     public void logAddChat(ChatMemberUpdate member){
-        telegramService.sendMessage(botConfig.getLogId(), "✅ New group added: "+member.getChat().getTitle()+"\nAdded by: <a href='tg://user?id="+member.getFrom().getId()+"'>"+member.getFrom().getFirst_name()+"</a>");
+        this.sendLog("✅ New group added: "+member.getChat().getTitle()+"\nAdded by: <a href='tg://user?id="+member.getFrom().getId()+"'>"+member.getFrom().getFirst_name()+"</a>");
     }
 
 }
