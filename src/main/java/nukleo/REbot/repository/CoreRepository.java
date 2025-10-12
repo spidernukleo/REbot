@@ -9,24 +9,22 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class DatabaseRepository {
+public class CoreRepository {
 
     @Autowired
     private JdbcTemplate jdbc;
 
-    public boolean addTable(Long chatId){
+    public void addTable(Long chatId){
         String tableName = "chat_"+chatId;
         try{
             jdbc.execute("CREATE TABLE IF NOT EXISTS \""+tableName+"\" (userId BIGINT PRIMARY KEY, points BIGINT DEFAULT 0, userFirstName TEXT)");
-            return true;
         }
         catch(Exception e){
             e.printStackTrace();
-            return false;
         }
     }
 
-    public boolean incrementPoints(Long chatId, Long userId, String userFirstName){
+    public void incrementPoints(Long chatId, Long userId, String userFirstName){
         String tableName = "chat_"+chatId;
         try{
             String sql = "INSERT INTO \"" + tableName + "\" (userId, points, userFirstName) " +
@@ -34,11 +32,9 @@ public class DatabaseRepository {
                     "ON CONFLICT (userId) DO UPDATE SET points = \"" + tableName + "\".points + 1, " +
                     "userFirstName = EXCLUDED.userFirstName";
             jdbc.update(sql, userId, userFirstName);
-            return true;
         }
         catch(Exception e){
             e.printStackTrace();
-            return false;
         }
     }
 

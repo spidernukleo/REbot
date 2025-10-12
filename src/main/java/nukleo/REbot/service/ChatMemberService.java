@@ -3,7 +3,9 @@ package nukleo.REbot.service;
 
 import lombok.AllArgsConstructor;
 import nukleo.REbot.model.ChatMemberUpdate;
-import nukleo.REbot.repository.DatabaseRepository;
+import nukleo.REbot.repository.CoreRepository;
+import nukleo.REbot.repository.LanguageRepository;
+import nukleo.REbot.util.TranslationManager;
 import org.springframework.stereotype.Service;
 
 
@@ -11,21 +13,24 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class ChatMemberService {
 
-    private final DatabaseRepository databaseRepository;
+    private final CoreRepository coreRepository;
     private final TelegramService telegramService;
     private final LogService logService;
+    private final TranslationManager translationManager;
 
     public void handleChat(ChatMemberUpdate member) {
         String status = member.getNew_chat_member().getStatus();
+        Long chatId = member.getChat().getId();
         if(status.equals("left") || status.equals("kicked")) return; //continue only if added
 
         if(!member.getChat().getType().equals("supergroup")){
-            telegramService.leaveChat(member.getChat().getId()); //leave if channel or group(non supergroup)
+            telegramService.leaveChat(chatId); //leave if channel or group(non supergroup)
             return;
         }
 
-        databaseRepository.addTable(member.getChat().getId());
+        coreRepository.addTable(chatId);
+        translationManager.addChatLanguage(chatId);
         logService.logAddChat(member);
-        telegramService.sendMessage(member.getChat().getId(), "Salve, scrivi daniele per diventare il re daniele del giorno");
+        telegramService.sendMessage(chatId, "Salve, scrivi daniele per diventare il re daniele del giorno");
     }
 }

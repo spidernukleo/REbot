@@ -1,28 +1,24 @@
 package nukleo.REbot;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import nukleo.REbot.util.TranslationManager;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class StartupInitializer implements CommandLineRunner {
 
-    @Autowired
-    private JdbcTemplate jdbc;
+    private final TranslationManager translationManager;
 
     @Override
     public void run(String... args) throws Exception {
         System.out.println("\uD83D\uDE80 Bot startup logic running...");
 
-        // ensure table exists
-        jdbc.execute("""
-            CREATE TABLE IF NOT EXISTS languages (
-                chatId BIGINT NOT NULL PRIMARY KEY,
-                activeLangCode VARCHAR(5) NOT NULL
-            )
-        """);
-
+        translationManager.createLanguageTable();
+        translationManager.loadAll();
+        translationManager.loadTranslations("it");
+        translationManager.loadTranslations("en");
 
         System.out.println("✅ Startup complete!");
     }
