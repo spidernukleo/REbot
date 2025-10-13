@@ -20,6 +20,10 @@ public class LogService {
         telegramService.sendMessage(logId, text);
     }
 
+    public void pingOnline(){
+        this.sendLog("online");
+    }
+
     public void logAddChat(ChatMemberUpdate member){
         this.sendLog("✅ New group added: "+member.getChat().getTitle()+"\nAdded by: <a href='tg://user?id="+member.getFrom().getId()+"'>"+member.getFrom().getFirst_name()+"</a>");
     }

@@ -40,24 +40,22 @@ public class MessageService {
     }
 
     //handle all commands
+
+
+    /// TUTTO DA FARE BENE QUA!!!!
+    /// 1. implementa callback fai /language con due bottoni e le bandierine per scegliere, fai callbackservice class e gestisci la
+
+
     public void handleEnglish(Message message){
-        translationManager.setLanguage(message.getChat().getId(), "en");
-        String mex = translationManager.getMessage(message.getChat().getId(), "changelang");
-        telegramService.sendMessage(message.getChat().getId(), mex);
-    }
-    public void handleItaliano(Message message){
-        translationManager.setLanguage(message.getChat().getId(), "it");
-        String mex = translationManager.getMessage(message.getChat().getId(), "changelang");
-        telegramService.sendMessage(message.getChat().getId(), mex);
+        Long chatId = message.getChat().getId();
+        translationManager.setLanguage(chatId, "en");
+        telegramService.sendMessage(chatId, translationManager.getMessage(message.getChat().getId(), "changelang"));
     }
 
-    private String generateTop(List<? extends TopRecord> records){
-        StringBuilder text= new StringBuilder();
-        for(int i=1;i<records.size()+1;i++) {
-            TopRecord record = records.get(i-1);
-            text.append("\n").append(i).append("° • ").append(record.getFirstName()).append(" | ").append(record.getPoints());
-        }
-        return text.toString();
+    public void handleItaliano(Message message){
+        Long chatId = message.getChat().getId();
+        translationManager.setLanguage(chatId, "it");
+        telegramService.sendMessage(chatId, translationManager.getMessage(message.getChat().getId(), "changelang"));
     }
 
     public void handleTop(Message message) {
@@ -82,7 +80,18 @@ public class MessageService {
         telegramService.sendMessage(message.getChat().getId(), "\uD83C\uDF89 || Complimenti!\n\n\uD83D\uDC51 — "+userFirstName+" sei il Re Daniele di oggi!");
     }
 
+
+
     public void handleTopWrap(Message message) {
         handleTop(message); //used cuz if they go with the @command yk alr
+    }
+
+    private String generateTop(List<? extends TopRecord> records){
+        StringBuilder text= new StringBuilder();
+        for(int i=1;i<records.size()+1;i++) {
+            TopRecord record = records.get(i-1);
+            text.append("\n").append(i).append("° • ").append(record.getFirstName()).append(" | ").append(record.getPoints());
+        }
+        return text.toString();
     }
 }

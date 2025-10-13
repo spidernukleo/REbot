@@ -23,8 +23,8 @@ public class TranslationManager {
 
     private final Map<String, Map<String, String>> translations = new HashMap<>();
 
-    public String getLanguage(long chatId){
-        return this.groupLanguages.getOrDefault(chatId,"it");
+    public void createLanguageTable(){
+        languageRepository.createLanguageTable();
     }
 
     public void loadTranslations(String langCode){
@@ -44,12 +44,11 @@ public class TranslationManager {
         return translations.get(langCode).get(key);
     }
 
-
-    public void createLanguageTable(){
-        languageRepository.createLanguageTable();
+    public String getLanguage(long chatId){
+        return this.groupLanguages.getOrDefault(chatId,"it");
     }
 
-    public void loadAll(){
+    public void loadAllGroupsLanguages(){
         List<GroupLanguage> langs = languageRepository.getAllLanguages();
         for(GroupLanguage lang : langs){
             groupLanguages.put(lang.getChatId(), lang.getActiveLangCode());

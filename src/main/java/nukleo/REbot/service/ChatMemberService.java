@@ -23,14 +23,14 @@ public class ChatMemberService {
         Long chatId = member.getChat().getId();
         if(status.equals("left") || status.equals("kicked")) return; //continue only if added
 
-        if(!member.getChat().getType().equals("supergroup")){
-            telegramService.leaveChat(chatId); //leave if channel or group(non supergroup)
+        if(!member.getChat().getType().equals("channel")){
+            telegramService.leaveChat(chatId); //leave if channel
             return;
         }
 
         coreRepository.addTable(chatId);
         translationManager.addChatLanguage(chatId);
+        telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "welcome"));
         logService.logAddChat(member);
-        telegramService.sendMessage(chatId, "Salve, scrivi daniele per diventare il re daniele del giorno");
     }
 }
