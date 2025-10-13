@@ -57,12 +57,16 @@ public class TranslationManager {
 
     public void addChatLanguage(Long chatId){
         languageRepository.addChat(chatId);
-        groupLanguages.put(chatId, "it");
+        if(!groupLanguages.containsKey(chatId)){
+            groupLanguages.put(chatId, "it");
+        }
     }
 
     public void setLanguage(Long chatId, String languageCode){
-        languageRepository.updateLanguage(chatId, languageCode);
-        groupLanguages.put(chatId, languageCode);
+        if(!languageCode.equals(groupLanguages.get(chatId))){
+            languageRepository.updateLanguage(chatId, languageCode);
+            groupLanguages.put(chatId, languageCode);
+        }
     }
 
 }

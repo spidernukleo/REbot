@@ -23,7 +23,7 @@ public class ChatMemberService {
         Long chatId = member.getChat().getId();
         if(status.equals("left") || status.equals("kicked")) return; //continue only if added
 
-        if(!member.getChat().getType().equals("channel")){
+        if(member.getChat().getType().equals("channel")){
             telegramService.leaveChat(chatId); //leave if channel
             return;
         }

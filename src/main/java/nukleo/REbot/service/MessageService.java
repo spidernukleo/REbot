@@ -2,6 +2,8 @@ package nukleo.REbot.service;
 
 
 import lombok.AllArgsConstructor;
+import nukleo.REbot.model.InlineKeyboardButton;
+import nukleo.REbot.model.InlineKeyboardMarkup;
 import nukleo.REbot.model.Message;
 import nukleo.REbot.model.TopRecord;
 import nukleo.REbot.repository.CoreRepository;
@@ -14,6 +16,10 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static nukleo.REbot.model.InlineKeyboardButton.cb;
+import static nukleo.REbot.model.InlineKeyboardButton.link;
+import static nukleo.REbot.model.InlineKeyboardMarkup.genMenu;
 
 @Service
 @AllArgsConstructor
@@ -29,10 +35,11 @@ public class MessageService {
         if(message.getChat().getType().equals("private")) return;
         if (message.getText() != null) {
             Map<String, Runnable> commands = new HashMap<>();
-            commands.put("/english".toLowerCase(), () -> handleEnglish(message));
-            commands.put("/italiano".toLowerCase(), () -> handleItaliano(message));
+            commands.put("/lang".toLowerCase(), () -> handleLang(message));
+            commands.put("/lang@reclonebot".toLowerCase(), () -> handleLang(message));
             commands.put("/topdaniele".toLowerCase(), () -> handleTop(message));
-            commands.put("/topdaniele@reclonebot".toLowerCase(), () -> handleTopWrap(message));
+            commands.put("/topdaniele@reclonebot".toLowerCase(), () -> handleTop(message));
+            commands.put("/test".toLowerCase(), () -> comandoTestLingua(message));
             commands.put("daniele".toLowerCase(), () -> handleDaniele(message)); //mappa con tutti i comandi e che funzione eseguire
 
             commands.getOrDefault(message.getText().toLowerCase(), () -> {}).run(); //se non trovato non lanciare nulla
@@ -41,24 +48,28 @@ public class MessageService {
 
     //handle all commands
 
-
-    /// TUTTO DA FARE BENE QUA!!!!
-    /// 1. implementa callback fai /language con due bottoni e le bandierine per scegliere, fai callbackservice class e gestisci la
-
-
-    public void handleEnglish(Message message){
+    private void comandoTestLingua(Message message) {
         Long chatId = message.getChat().getId();
-        translationManager.setLanguage(chatId, "en");
-        telegramService.sendMessage(chatId, translationManager.getMessage(message.getChat().getId(), "changelang"));
+        telegramService.sendMessage(
+                chatId,
+                translationManager.getMessage(chatId, "test")
+        );
     }
 
-    public void handleItaliano(Message message){
-        Long chatId = message.getChat().getId();
-        translationManager.setLanguage(chatId, "it");
-        telegramService.sendMessage(chatId, translationManager.getMessage(message.getChat().getId(), "changelang"));
+    private void handleLang(Message message) {
+        long chatId = message.getChat().getId();
+
+        InlineKeyboardMarkup menu = genMenu(
+                new InlineKeyboardButton[]{ cb("\uD83C\uDDEE\uD83C\uDDF9", "/langit"), cb("\uD83C\uDDFA\uD83C\uDDF8", "/langen") }
+        );
+        telegramService.sendMessage(
+                chatId,
+                translationManager.getMessage(chatId, "changelang"),
+                menu
+        );
     }
 
-    public void handleTop(Message message) {
+    private void handleTop(Message message) {
         //if(redisRepository.canExecute(message.getChat().getId(), 20000)) {
             List<TopRecord> records = coreRepository.getTopRecords(message.getChat().getId());
             String text="\uD83D\uDD1D || <b>CLASSIFICA DANIELI</b>:"+this.generateTop(records)+"\n\n<i>Per qualsiasi problema @nukleolimitatibot</i>";
@@ -66,7 +77,7 @@ public class MessageService {
         //}
     }
 
-    public void handleDaniele(Message message){
+    private void handleDaniele(Message message){
         Long chatid = message.getChat().getId();
         Long userId= message.getFrom().getId();
         String userFirstName = message.getFrom().getFirst_name();
@@ -80,11 +91,6 @@ public class MessageService {
         telegramService.sendMessage(message.getChat().getId(), "\uD83C\uDF89 || Complimenti!\n\n\uD83D\uDC51 — "+userFirstName+" sei il Re Daniele di oggi!");
     }
 
-
-
-    public void handleTopWrap(Message message) {
-        handleTop(message); //used cuz if they go with the @command yk alr
-    }
 
     private String generateTop(List<? extends TopRecord> records){
         StringBuilder text= new StringBuilder();

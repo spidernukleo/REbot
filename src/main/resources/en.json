@@ -1,7 +1,8 @@
 {
-  "welcome": "Welcome to the group!",
+  "changedLang": "Done!",
   "language_changed": "The language has been changed to English.",
   "error": "An error occurred.",
-  "changelang": "Language changed correctly.",
-  "welcome": "write to become first king bye"
+  "changelang": "Choose new language:",
+  "welcome": "write to become first king bye",
+  "test": "SONO IN INGLESE"
 }
