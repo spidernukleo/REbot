@@ -34,6 +34,7 @@ public class CommandsManager {
     public boolean addChatCommand(Long chatId, String command){
         List<String> commands = groupCommands.computeIfAbsent(chatId, k -> new ArrayList<>());
         if(commands.size()>=5) return false;
+        command=command.toLowerCase();
         if(commands.contains(command)) return true;
         commandsRepository.addCommand(chatId, command);
         commands.add(command);

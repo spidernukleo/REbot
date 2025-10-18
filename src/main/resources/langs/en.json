@@ -12,5 +12,7 @@
   "infocmd": "Press x to delete king.",
   "deletecmdinfo": "Are you sure to delete king: ",
   "confirm": "Confirm ✅",
-  "dismiss": "Dismiss ✖\uFE0F"
+  "dismiss": "Dismiss ✖\uFE0F",
+  "topText": "\uD83D\uDD1D || <b>KING RANKINGS:</b>",
+  "bottomText": "\n\n<i>For any problem @nukleolimitatibot</i>"
 }

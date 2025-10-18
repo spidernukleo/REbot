@@ -12,5 +12,7 @@
   "infocmd": "Premi sulla x per eliminare il comando.",
   "deletecmdinfo": "Sei sicuro di voler eliminare il re: ",
   "confirm": "Conferma ✅",
-  "dismiss": "Annulla ✖\uFE0F"
+  "dismiss": "Annulla ✖\uFE0F",
+  "topText": "\uD83D\uDD1D || <b>CLASSIFICA RE:</b>",
+  "bottomText": "\n\n<i>Per qualsiasi problema @nukleolimitatibot</i>"
 }

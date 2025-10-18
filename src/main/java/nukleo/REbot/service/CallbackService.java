@@ -6,8 +6,11 @@ import nukleo.REbot.model.CallBackQuery;
 import nukleo.REbot.model.InlineKeyboardButton;
 import nukleo.REbot.model.InlineKeyboardMarkup;
 import nukleo.REbot.util.CommandsManager;
+import nukleo.REbot.util.HelperMethods;
 import nukleo.REbot.util.TranslationManager;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static nukleo.REbot.model.InlineKeyboardButton.cb;
 import static nukleo.REbot.model.InlineKeyboardMarkup.genMenu;
@@ -20,6 +23,7 @@ public class CallbackService {
     private final CommandsManager commandsManager;
     private TranslationManager translationManager;
     private TelegramService telegramService;
+    private HelperMethods helper;
 
     public void handleCallBack(CallBackQuery query) {
         String data = query.getData();
@@ -27,22 +31,25 @@ public class CallbackService {
         String queryId = query.getId();
         Integer messageId = query.getMessage().getMessage_id();
         long senderId = query.getFrom().getId();
-        if(!telegramService.isUserAdmin(chatId, senderId)) return;
         if (data == null) return;
         else if(data.equals("/langit")) {
+            if(!telegramService.isUserAdmin(chatId, senderId)) return;
             translationManager.setLanguage(chatId, "it");
             telegramService.answerCallback(queryId, translationManager.getMessage(chatId, "done"));
             telegramService.deleteMessage(chatId, messageId);
         }
         else if(data.equals("/langen")) {
+            if(!telegramService.isUserAdmin(chatId, senderId)) return;
             translationManager.setLanguage(chatId, "en");
             telegramService.answerCallback(queryId, translationManager.getMessage(chatId, "done"));
             telegramService.deleteMessage(chatId, messageId);
         }
         else if(data.startsWith("/info_")) {
+            if(!telegramService.isUserAdmin(chatId, senderId)) return;
             telegramService.answerCallback(queryId, translationManager.getMessage(chatId, "infocmd"));
         }
         else if(data.startsWith("/del_")) {
+            if(!telegramService.isUserAdmin(chatId, senderId)) return;
             String cmdToDelete = data.substring(5);
             InlineKeyboardMarkup menu = genMenu(
                     new InlineKeyboardButton[]{
@@ -53,13 +60,19 @@ public class CallbackService {
             telegramService.editMessage(chatId, messageId, translationManager.getMessage(chatId, "deletecmdinfo") + "<i>"+cmdToDelete+"</i>", menu);
         }
         else if (data.startsWith("/confirmdel_")) {
+            if(!telegramService.isUserAdmin(chatId, senderId)) return;
             String cmdToDelete = data.substring(12);
             commandsManager.removeChatCommand(chatId, cmdToDelete);
             telegramService.answerCallback(queryId, translationManager.getMessage(chatId, "done"));
             telegramService.deleteMessage(chatId, messageId);
         }
         else if(data.startsWith("/dismissdel")) {
+            if(!telegramService.isUserAdmin(chatId, senderId)) return;
             telegramService.deleteMessage(chatId, messageId);
+        }
+        else if(data.startsWith("/top_")) {
+            String cmd = data.substring(5);
+            helper.genTop(chatId, messageId, cmd);
         }
 
     }

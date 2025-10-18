@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static nukleo.REbot.model.InlineKeyboardButton.cb;
-import static nukleo.REbot.model.InlineKeyboardButton.link;
+import nukleo.REbot.util.HelperMethods;
 import static nukleo.REbot.model.InlineKeyboardMarkup.genMenu;
 
 @Service
@@ -28,17 +28,26 @@ public class MessageService {
     private final CommandsManager commandsManager;
     private CoreRepository coreRepository;
     private TranslationManager translationManager;
+    private HelperMethods helper;
 
 
     public void handleMessage(Message message) {
         if(message.getChat().getType().equals("private")) return;
         String text = message.getText();
         long chatId = message.getChat().getId();
-        long senderId = message.getFrom().getId();
         if(text==null) return;
-
+        else if(commandsManager.getGroupCommands(chatId).contains(text.toLowerCase())){
+            //String king= redisRepository.getKing(chatid);
+            //if(king!=null){
+                //telegramService.sendMessage(message.getChat().getId(), "\uD83D\uDE2D || HEY\n\n\uD83D\uDC51 — "+king+" ha già preso il posto di Re Daniele di oggi");
+                //return;
+            //}
+            //redisRepository.setKing(chatid, userFirstName);
+            //coreRepository.incrementPoints(chatid, userId, userFirstName);
+            telegramService.sendMessage(chatId, "\uD83C\uDF89 || Complimenti!\n\n\uD83D\uDC51 — "+message.getFrom().getFirst_name()+" sei il Re "+text.toUpperCase()+" di oggi!");
+        }
         else if(text.startsWith("/lang")) {
-            if(!telegramService.isUserAdmin(chatId, senderId)) return;
+            if(!telegramService.isUserAdmin(chatId, message.getFrom().getId())) return;
             InlineKeyboardMarkup menu = genMenu(
                     new InlineKeyboardButton[]{
                             cb("\uD83C\uDDEE\uD83C\uDDF9", "/langit"),
@@ -63,7 +72,7 @@ public class MessageService {
         }
 
         else if(text.equals("/setking")) {
-            if(!telegramService.isUserAdmin(chatId, senderId)) return;
+            if(!telegramService.isUserAdmin(chatId, message.getFrom().getId())) return;
             Message repliedMessage = message.getReply_to_message();
             if(repliedMessage == null) telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "notreply"));
             else{
@@ -78,53 +87,12 @@ public class MessageService {
             }
         }
 
-    }
-
-
-
-    //handle all commands
-
-    private void comandoTestLingua(Message message) {
-        Long chatId = message.getChat().getId();
-        telegramService.sendMessage(
-                chatId,
-                translationManager.getMessage(chatId, "test")
-        );
-    }
-
-    private void handleLang(Message message) {
-
-    }
-
-    private void handleTop(Message message) {
         //if(redisRepository.canExecute(message.getChat().getId(), 20000)) {
-            List<TopRecord> records = coreRepository.getTopRecords(message.getChat().getId());
-            String text="\uD83D\uDD1D || <b>CLASSIFICA DANIELI</b>:"+this.generateTop(records)+"\n\n<i>Per qualsiasi problema @nukleolimitatibot</i>";
-            telegramService.sendMessage(message.getChat().getId(), text);
+        //List<TopRecord> records = coreRepository.getTopRecords(message.getChat().getId());
         //}
-    }
 
-    private void handleDaniele(Message message){
-        Long chatid = message.getChat().getId();
-        Long userId= message.getFrom().getId();
-        String userFirstName = message.getFrom().getFirst_name();
-        String king= redisRepository.getKing(chatid);
-        if(king!=null){
-            telegramService.sendMessage(message.getChat().getId(), "\uD83D\uDE2D || HEY\n\n\uD83D\uDC51 — "+king+" ha già preso il posto di Re Daniele di oggi");
-            return;
+        else if(text.startsWith("/top")) {
+            helper.genTop(chatId, 0, "/");
         }
-        redisRepository.setKing(chatid, userFirstName);
-        coreRepository.incrementPoints(chatid, userId, userFirstName);
-        telegramService.sendMessage(message.getChat().getId(), "\uD83C\uDF89 || Complimenti!\n\n\uD83D\uDC51 — "+userFirstName+" sei il Re Daniele di oggi!");
-    }
-
-
-    private String generateTop(List<? extends TopRecord> records){
-        StringBuilder text= new StringBuilder();
-        for(int i=1;i<records.size()+1;i++) {
-            TopRecord record = records.get(i-1);
-            text.append("\n").append(i).append("° • ").append(record.getFirstName()).append(" | ").append(record.getPoints());
-        }
-        return text.toString();
     }
 }
