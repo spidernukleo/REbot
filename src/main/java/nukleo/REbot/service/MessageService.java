@@ -34,9 +34,11 @@ public class MessageService {
         if(message.getChat().getType().equals("private")) return;
         String text = message.getText();
         long chatId = message.getChat().getId();
+        long senderId = message.getFrom().getId();
         if(text==null) return;
 
         else if(text.startsWith("/lang")) {
+            if(!telegramService.isUserAdmin(chatId, senderId)) return;
             InlineKeyboardMarkup menu = genMenu(
                     new InlineKeyboardButton[]{
                             cb("\uD83C\uDDEE\uD83C\uDDF9", "/langit"),
@@ -50,25 +52,29 @@ public class MessageService {
             List<String> commands = commandsManager.getGroupCommands(chatId);
             if(!commands.isEmpty()) {
                 InlineKeyboardButton[][] rows = commands.stream()
-                        .map(cmd -> new InlineKeyboardButton[]{ cb(cmd, cmd) })
+                        .map(cmd -> new InlineKeyboardButton[]{
+                                cb(cmd, "/info_"+cmd),                     // command button
+                                cb("❌", "/del_"+cmd)            // delete button with unique callback
+                        })
                         .toArray(InlineKeyboardButton[][]::new);
-                telegramService.sendMessage(chatId, "i tuoi comandi", genMenu(rows));
+                telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "kings"), genMenu(rows));
             }
-            else telegramService.sendMessage(chatId, "Nessun comando - tradurre");
+            else telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "nocmds"));
         }
 
         else if(text.equals("/setking")) {
+            if(!telegramService.isUserAdmin(chatId, senderId)) return;
             Message repliedMessage = message.getReply_to_message();
             if(repliedMessage == null) telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "notreply"));
             else{
                 String command = repliedMessage.getText();
-                if(!(command.length() >10)){
-                    if(command.contains(" ")) telegramService.sendMessage(chatId, "Niente spazi - tradurre");
+                if(command!=null && command.length()<10 && !command.startsWith("/")) {
+                    if(command.contains(" ")) telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "nospaces"));
                     else if(commandsManager.addChatCommand(chatId, command)) telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "setking"));
-                    else telegramService.sendMessage(chatId, "Hai troppi comandi - tradurre");
+                    else telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "toomanycmds"));
                 }
                 else
-                    telegramService.sendMessage(chatId, "Troppo lungo - tradurre");
+                    telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "toolong"));
             }
         }
 

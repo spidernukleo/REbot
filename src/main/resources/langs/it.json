@@ -1,7 +1,16 @@
 {
   "welcome": "Salve, sono il master Re Primo \uD83D\uDD25\nVisualizza i tuoi re con /commands e impostane di nuovi rispondendo ad un messaggio /setking \uD83D\uDCDD, da quel momento, il primo del giorno a scrivere quella parola diventerà il Re.\n\nUsa /top per vedere le classifiche  \uD83D\uDD1D\nPer qualsiasi problema @nukleolimitatibot",
-  "changedLang": "Fatto!",
+  "done": "Fatto!",
   "changelang": "Scegli la nuova lingua:",
   "setking": "Nuovo Re impostato correttamente \uD83D\uDD25",
-  "notreply": "Questo comando va usato in risposta ad un altro messaggio."
+  "notreply": "Questo comando va usato in risposta ad un altro messaggio.",
+  "nocmds": "Nessun Re impostato.\nUsa /setking in risposta ad una parola per renderla Re.",
+  "kings": "I Re del gruppo:",
+  "nospaces": "Il comando Re non può contenere spazi.",
+  "toomanycmds": "Massimo di 5 Re già raggiunto.",
+  "toolong": "Il comando Re può essere di massimo 10 caratteri.",
+  "infocmd": "Premi sulla x per eliminare il comando.",
+  "deletecmdinfo": "Sei sicuro di voler eliminare il re: ",
+  "confirm": "Conferma ✅",
+  "dismiss": "Annulla ✖\uFE0F"
 }

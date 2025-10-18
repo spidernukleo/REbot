@@ -48,4 +48,13 @@ public class CommandsRepository {
         }
     }
 
+    public void removeCommand(Long chatId, String command){
+        try {
+            String sql = "DELETE FROM commands WHERE chatId = ? AND command = ?";
+            jdbc.update(sql, chatId, command);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

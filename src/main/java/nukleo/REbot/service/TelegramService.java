@@ -1,7 +1,9 @@
 package nukleo.REbot.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import nukleo.REbot.model.ChatMember;
 import nukleo.REbot.model.InlineKeyboardButton;
 import nukleo.REbot.model.InlineKeyboardMarkup;
 import nukleo.REbot.util.BotConfig;
@@ -66,12 +68,53 @@ public class TelegramService {
                 "chat_id", chatId,
                 "message_id", messageId
         );
-
         try {
             new RestTemplate().postForObject(botConfig.getTgUrl() + "/deleteMessage", req, String.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void editMessage(Long chatId, Integer messageId, String newText){
+        this.editMessage(chatId, messageId, newText, null);
+    }
+
+    public void editMessage(Long chatId, Integer messageId, String newText, InlineKeyboardMarkup newMenu) {
+        Map<String, Object> req = new HashMap<>();
+        req.put("chat_id", chatId);
+        req.put("message_id", messageId);
+        req.put("text", newText);
+        req.put("parse_mode", "HTML");
+        if (newMenu != null) req.put("reply_markup", newMenu);
+
+        try{
+            new RestTemplate().postForObject(botConfig.getTgUrl()+"/editMessageText", req, String.class);
+        }catch(Exception e){
+            throw new RuntimeException("Error editing message "+chatId +": "+e.getMessage());
+        }
+    }
+
+    private ChatMember getChatMember(Long chatId, Long userId){
+        Map<String, Object> req = Map.of(
+                "chat_id", chatId,
+                "user_id", userId
+        );
+        try{
+            Map<String, Object> response = new RestTemplate().postForObject(botConfig.getTgUrl() + "/getChatMember", req, Map.class);
+            if (response == null || !(Boolean) response.get("ok")) return null;
+            return new ObjectMapper().convertValue(response.get("result"), ChatMember.class);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean isUserAdmin(Long chatId, Long userId) {
+        ChatMember member = getChatMember(chatId, userId);
+        if (member == null) return false;
+        String status = member.getStatus();
+        return "administrator".equals(status) || "creator".equals(status);
     }
 
 }

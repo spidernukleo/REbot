@@ -48,5 +48,14 @@ public class CommandsManager {
         return groupCommands.getOrDefault(chatid, List.of());
     }
 
+    public void removeChatCommand(Long chatid, String command){
+        List<String> cmds = groupCommands.get(chatid);
+        if (cmds != null) {
+            cmds.remove(command);
+            if (cmds.isEmpty()) groupCommands.remove(chatid);
+        }
+        commandsRepository.removeCommand(chatid, command);
+    }
+
 
 }

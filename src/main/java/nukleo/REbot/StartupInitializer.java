@@ -26,7 +26,7 @@ public class StartupInitializer implements CommandLineRunner {
         commandsManager.createCommandsTable();
         commandsManager.loadAllGroupCommands();
 
-        logService.pingOnline();
+        //logService.pingOnline();
 
         System.out.println("✅ Startup complete!");
     }

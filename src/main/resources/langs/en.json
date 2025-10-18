@@ -1,10 +1,16 @@
 {
-  "changedLang": "Done!",
-  "language_changed": "The language has been changed to English.",
-  "error": "An error occurred.",
-  "changelang": "Choose new language:",
-  "welcome": "write to become first king bye",
-  "test": "SONO IN INGLESE",
-  "setking": "Command set.",
-  "notreply": "Please use this command in reply to another message."
+  "welcome": "Hello — I'm Master First King \uD83D\uDD25\nView your kings with /commands and set new ones by replying to a message with /setking \uD83D\uDCDD; from then on, the first person each day to write that word will become the King.\n\nUse /top to see the rankings  \uD83D\uDD1D\nFor any issues @nukleolimitatibot",
+  "done": "Done!",
+  "changelang": "Choose the new language:",
+  "setking": "New King set successfully \uD83D\uDD25",
+  "notreply": "This command must be used in reply to another message.",
+  "nocmds": "No King set.\nUse /setking in reply to a word to make it a King.",
+  "kings": "The group's Kings:",
+  "nospaces": "The King command cannot contain spaces.",
+  "toomanycmds": "Maximum of 5 Kings reached.",
+  "toolong": "The King command can be at most 10 characters long.",
+  "infocmd": "Press x to delete king.",
+  "deletecmdinfo": "Are you sure to delete king: ",
+  "confirm": "Confirm ✅",
+  "dismiss": "Dismiss ✖\uFE0F"
 }
