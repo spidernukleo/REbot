@@ -9,4 +9,5 @@ public class Message {
     private Chat chat;
     private Long date;
     private String text;
+    private Message reply_to_message;
 }

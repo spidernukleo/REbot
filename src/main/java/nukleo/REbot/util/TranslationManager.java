@@ -7,10 +7,13 @@ import nukleo.REbot.model.GroupLanguage;
 import nukleo.REbot.repository.LanguageRepository;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -27,21 +30,23 @@ public class TranslationManager {
         languageRepository.createLanguageTable();
     }
 
-    public void loadTranslations(String langCode){
-        try{
-            ObjectMapper mapper = new ObjectMapper();
-            InputStream is = this.getClass().getResourceAsStream("/"+langCode+".json");
-            Map<String, String> phrases = mapper.readValue(is, new TypeReference<>() {});
-            translations.put(langCode, phrases);
-        }catch(Exception e){
-            e.printStackTrace();
+    public void loadTranslations() {
+        ObjectMapper mapper = new ObjectMapper();
+        for (String lang : new String[]{"en", "it"}) { //add lang here
+            try (InputStream is = getClass().getResourceAsStream("/langs/" + lang + ".json")) {
+                if (is != null) {
+                    Map<String, String> phrases = mapper.readValue(is, new TypeReference<>() {});
+                    translations.put(lang, phrases);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     public String getMessage(long chatId, String key){
         String langCode = this.getLanguage(chatId);
-        return translations.get(langCode).get(key);
+        return translations.get(langCode).getOrDefault(key, key);
     }
 
     public String getLanguage(long chatId){

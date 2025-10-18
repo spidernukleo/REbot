@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import nukleo.REbot.model.ChatMemberUpdate;
 import nukleo.REbot.repository.CoreRepository;
 import nukleo.REbot.repository.LanguageRepository;
+import nukleo.REbot.util.CommandsManager;
 import nukleo.REbot.util.TranslationManager;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ public class ChatMemberService {
     private final TelegramService telegramService;
     private final LogService logService;
     private final TranslationManager translationManager;
+    private final CommandsManager commandsManager;
 
     public void handleChat(ChatMemberUpdate member) {
         String status = member.getNew_chat_member().getStatus();

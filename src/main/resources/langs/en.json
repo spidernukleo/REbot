@@ -4,5 +4,7 @@
   "error": "An error occurred.",
   "changelang": "Choose new language:",
   "welcome": "write to become first king bye",
-  "test": "SONO IN INGLESE"
+  "test": "SONO IN INGLESE",
+  "setking": "Command set.",
+  "notreply": "Please use this command in reply to another message."
 }

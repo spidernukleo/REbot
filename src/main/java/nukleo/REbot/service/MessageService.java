@@ -2,16 +2,15 @@ package nukleo.REbot.service;
 
 
 import lombok.AllArgsConstructor;
-import nukleo.REbot.model.InlineKeyboardButton;
-import nukleo.REbot.model.InlineKeyboardMarkup;
-import nukleo.REbot.model.Message;
-import nukleo.REbot.model.TopRecord;
+import nukleo.REbot.model.*;
 import nukleo.REbot.repository.CoreRepository;
 import nukleo.REbot.repository.RedisRepository;
+import nukleo.REbot.util.CommandsManager;
 import nukleo.REbot.util.TranslationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Protocol;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,27 +23,58 @@ import static nukleo.REbot.model.InlineKeyboardMarkup.genMenu;
 @Service
 @AllArgsConstructor
 public class MessageService {
-    @Autowired
-    private JdbcTemplate jdbc;
     private final TelegramService telegramService;
     private final RedisRepository redisRepository;
+    private final CommandsManager commandsManager;
     private CoreRepository coreRepository;
     private TranslationManager translationManager;
 
+
     public void handleMessage(Message message) {
         if(message.getChat().getType().equals("private")) return;
-        if (message.getText() != null) {
-            Map<String, Runnable> commands = new HashMap<>();
-            commands.put("/lang".toLowerCase(), () -> handleLang(message));
-            commands.put("/lang@reclonebot".toLowerCase(), () -> handleLang(message));
-            commands.put("/topdaniele".toLowerCase(), () -> handleTop(message));
-            commands.put("/topdaniele@reclonebot".toLowerCase(), () -> handleTop(message));
-            commands.put("/test".toLowerCase(), () -> comandoTestLingua(message));
-            commands.put("daniele".toLowerCase(), () -> handleDaniele(message)); //mappa con tutti i comandi e che funzione eseguire
+        String text = message.getText();
+        long chatId = message.getChat().getId();
+        if(text==null) return;
 
-            commands.getOrDefault(message.getText().toLowerCase(), () -> {}).run(); //se non trovato non lanciare nulla
+        else if(text.startsWith("/lang")) {
+            InlineKeyboardMarkup menu = genMenu(
+                    new InlineKeyboardButton[]{
+                            cb("\uD83C\uDDEE\uD83C\uDDF9", "/langit"),
+                            cb("\uD83C\uDDFA\uD83C\uDDF8", "/langen")
+                    } //add flags here
+            );
+            telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "changelang"), menu);
         }
+
+        else if(text.startsWith("/commands")) {
+            List<String> commands = commandsManager.getGroupCommands(chatId);
+            if(!commands.isEmpty()) {
+                InlineKeyboardButton[][] rows = commands.stream()
+                        .map(cmd -> new InlineKeyboardButton[]{ cb(cmd, cmd) })
+                        .toArray(InlineKeyboardButton[][]::new);
+                telegramService.sendMessage(chatId, "i tuoi comandi", genMenu(rows));
+            }
+            else telegramService.sendMessage(chatId, "Nessun comando - tradurre");
+        }
+
+        else if(text.equals("/setking")) {
+            Message repliedMessage = message.getReply_to_message();
+            if(repliedMessage == null) telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "notreply"));
+            else{
+                String command = repliedMessage.getText();
+                if(!(command.length() >10)){
+                    if(command.contains(" ")) telegramService.sendMessage(chatId, "Niente spazi - tradurre");
+                    else if(commandsManager.addChatCommand(chatId, command)) telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "setking"));
+                    else telegramService.sendMessage(chatId, "Hai troppi comandi - tradurre");
+                }
+                else
+                    telegramService.sendMessage(chatId, "Troppo lungo - tradurre");
+            }
+        }
+
     }
+
+
 
     //handle all commands
 
@@ -57,16 +87,7 @@ public class MessageService {
     }
 
     private void handleLang(Message message) {
-        long chatId = message.getChat().getId();
 
-        InlineKeyboardMarkup menu = genMenu(
-                new InlineKeyboardButton[]{ cb("\uD83C\uDDEE\uD83C\uDDF9", "/langit"), cb("\uD83C\uDDFA\uD83C\uDDF8", "/langen") }
-        );
-        telegramService.sendMessage(
-                chatId,
-                translationManager.getMessage(chatId, "changelang"),
-                menu
-        );
     }
 
     private void handleTop(Message message) {

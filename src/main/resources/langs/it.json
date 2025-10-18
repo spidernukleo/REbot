@@ -1,0 +1,7 @@
+{
+  "welcome": "Salve, sono il master Re Primo \uD83D\uDD25\nVisualizza i tuoi re con /commands e impostane di nuovi rispondendo ad un messaggio /setking \uD83D\uDCDD, da quel momento, il primo del giorno a scrivere quella parola diventerà il Re.\n\nUsa /top per vedere le classifiche  \uD83D\uDD1D\nPer qualsiasi problema @nukleolimitatibot",
+  "changedLang": "Fatto!",
+  "changelang": "Scegli la nuova lingua:",
+  "setking": "Nuovo Re impostato correttamente \uD83D\uDD25",
+  "notreply": "Questo comando va usato in risposta ad un altro messaggio."
+}

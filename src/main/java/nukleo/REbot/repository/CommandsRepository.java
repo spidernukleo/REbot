@@ -1,0 +1,51 @@
+package nukleo.REbot.repository;
+
+import nukleo.REbot.model.GroupCommand;
+import nukleo.REbot.model.GroupLanguage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+
+@Service
+public class CommandsRepository {
+
+    @Autowired
+    private JdbcTemplate jdbc;
+
+    public void createCommandsTable(){
+        try{
+            jdbc.execute(" CREATE TABLE IF NOT EXISTS commands ( chatId BIGINT NOT NULL, command VARCHAR(10) NOT NULL, UNIQUE (chatId, command)) ");
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public List<GroupCommand> getAllGroupCommands(){
+        try{
+            String sql = "SELECT chatId, command FROM commands";
+            return jdbc.query(sql, (rs, rowNum) -> new GroupCommand(
+                    rs.getLong("chatId"),
+                    rs.getString("command")
+            ));
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return List.of();
+        }
+    }
+
+    public void addCommand(Long chatId, String command){
+        try{
+            String sql = "INSERT OR IGNORE INTO commands (chatId, command) VALUES(?, ?)";
+            jdbc.update(sql, chatId, command);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+}
