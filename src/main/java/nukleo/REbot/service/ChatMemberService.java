@@ -30,7 +30,6 @@ public class ChatMemberService {
             return;
         }
 
-        coreRepository.addTable(chatId);
         translationManager.addChatLanguage(chatId);
         telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "welcome"));
         logService.logAddChat(member);

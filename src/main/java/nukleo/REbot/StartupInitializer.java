@@ -3,6 +3,7 @@ package nukleo.REbot;
 import lombok.AllArgsConstructor;
 import nukleo.REbot.service.LogService;
 import nukleo.REbot.util.CommandsManager;
+import nukleo.REbot.util.CoreManager;
 import nukleo.REbot.util.TranslationManager;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ public class StartupInitializer implements CommandLineRunner {
     private final TranslationManager translationManager;
     private final LogService logService;
     private final CommandsManager commandsManager;
+    private final CoreManager coreManager;
 
     @Override
     public void run(String... args) throws Exception {
@@ -25,6 +27,8 @@ public class StartupInitializer implements CommandLineRunner {
 
         commandsManager.createCommandsTable();
         commandsManager.loadAllGroupCommands();
+
+        coreManager.createPointsTable();
 
         //logService.pingOnline();
 

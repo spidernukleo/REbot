@@ -10,9 +10,12 @@
   "toomanycmds": "Maximum of 5 Kings reached.",
   "toolong": "The King command can be at most 10 characters long.",
   "infocmd": "Press x to delete king.",
-  "deletecmdinfo": "Are you sure to delete king: ",
+  "deletecmdinfo": "Are you sure to delete all points of command king: ",
   "confirm": "Confirm ✅",
   "dismiss": "Dismiss ✖\uFE0F",
   "topText": "\uD83D\uDD1D || <b>KING RANKINGS:</b>",
-  "bottomText": "\n\n<i>For any problem @nukleolimitatibot</i>"
+  "bottomText": "\n\n<i>For any problem @nukleolimitatibot</i>",
+  "congrats": "\uD83C\uDF89 || Congrats!\n\n\uD83D\uDC51 — ",
+  "youare": " you are today's ",
+  "oftoday": " King!"
 }

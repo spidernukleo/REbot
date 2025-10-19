@@ -6,11 +6,9 @@ import nukleo.REbot.model.CallBackQuery;
 import nukleo.REbot.model.InlineKeyboardButton;
 import nukleo.REbot.model.InlineKeyboardMarkup;
 import nukleo.REbot.util.CommandsManager;
-import nukleo.REbot.util.HelperMethods;
+import nukleo.REbot.util.CoreManager;
 import nukleo.REbot.util.TranslationManager;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 import static nukleo.REbot.model.InlineKeyboardButton.cb;
 import static nukleo.REbot.model.InlineKeyboardMarkup.genMenu;
@@ -23,7 +21,7 @@ public class CallbackService {
     private final CommandsManager commandsManager;
     private TranslationManager translationManager;
     private TelegramService telegramService;
-    private HelperMethods helper;
+    private CoreManager helper;
 
     public void handleCallBack(CallBackQuery query) {
         String data = query.getData();

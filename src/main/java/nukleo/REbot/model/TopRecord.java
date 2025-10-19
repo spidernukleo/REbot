@@ -7,4 +7,5 @@ public class TopRecord {
     private Long userId;
     private Long points;
     private String firstName;
+    private String command;
 }

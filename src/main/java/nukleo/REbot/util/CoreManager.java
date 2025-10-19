@@ -2,22 +2,23 @@ package nukleo.REbot.util;
 
 import lombok.AllArgsConstructor;
 import nukleo.REbot.model.InlineKeyboardButton;
+import nukleo.REbot.model.TopRecord;
+import nukleo.REbot.repository.CoreRepository;
 import nukleo.REbot.service.TelegramService;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static nukleo.REbot.model.InlineKeyboardButton.cb;
 import static nukleo.REbot.model.InlineKeyboardMarkup.genMenu;
 
 @AllArgsConstructor
 @Component
-public class HelperMethods {
+public class CoreManager {
     private TranslationManager translationManager;
     private CommandsManager commandsManager;
     private TelegramService telegramService;
+    private CoreRepository coreRepository;
 
 
     public void genTop(long chatid, Integer messageid, String cmd){
@@ -38,15 +39,14 @@ public class HelperMethods {
     }
 
     private String genTopText(String cmd, long chatid){
-
-        //        for(int i=1;i<records.size()+1;i++) {
-//            TopRecord record = records.get(i-1);
-//            text.append("\n").append(i).append("° • ").append(record.getFirstName()).append(" | ").append(record.getPoints());
-//        }
-
+        List<TopRecord> records = this.getTopRecords(chatid, cmd);
         StringBuilder top = new StringBuilder();
         top.append(translationManager.getMessage(chatid, "topText"));
         top.append(" ").append(cmd);
+        for(int i=1;i<records.size()+1;i++) {
+            TopRecord record = records.get(i-1);
+            top.append("\n").append(i).append("° • ").append(record.getFirstName()).append(" | ").append(record.getPoints());
+        }
         top.append(translationManager.getMessage(chatid, "bottomText"));
         return top.toString();
     }
@@ -58,5 +58,13 @@ public class HelperMethods {
                         .map(cmd -> cb(cmd, "/top_" + cmd))
                         .toArray(InlineKeyboardButton[]::new)
         };
+    }
+
+    public void createPointsTable(){
+        coreRepository.createPointsTable();
+    }
+
+    private List<TopRecord> getTopRecords(Long chatid, String command){
+        return coreRepository.getTopRecords(chatid, command);
     }
 }

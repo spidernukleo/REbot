@@ -1,10 +1,19 @@
 package nukleo.REbot.util;
 
 import lombok.Getter;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.sqlite.SQLiteConfig;
+import org.sqlite.SQLiteDataSource;
 
-@Component
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+
 @Getter
+@Configuration
 public class BotConfig {
 
     private final String botToken;
@@ -23,5 +32,14 @@ public class BotConfig {
         this.logId = (logIdStr != null) ? Long.parseLong(logIdStr) : null;
         this.botId = Long.parseLong(botToken.split(":")[0]);
         this.tgUrl = "https://api.telegram.org/bot" + botToken;
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        SQLiteConfig config = new SQLiteConfig();
+        config.enforceForeignKeys(true); //enable all foreign keys
+        SQLiteDataSource ds = new SQLiteDataSource(config);
+        ds.setUrl("jdbc:sqlite:database.db");
+        return ds;
     }
 }

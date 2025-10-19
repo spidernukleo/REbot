@@ -7,17 +7,12 @@ import nukleo.REbot.repository.CoreRepository;
 import nukleo.REbot.repository.RedisRepository;
 import nukleo.REbot.util.CommandsManager;
 import nukleo.REbot.util.TranslationManager;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.Protocol;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static nukleo.REbot.model.InlineKeyboardButton.cb;
-import nukleo.REbot.util.HelperMethods;
+import nukleo.REbot.util.CoreManager;
 import static nukleo.REbot.model.InlineKeyboardMarkup.genMenu;
 
 @Service
@@ -28,7 +23,7 @@ public class MessageService {
     private final CommandsManager commandsManager;
     private CoreRepository coreRepository;
     private TranslationManager translationManager;
-    private HelperMethods helper;
+    private CoreManager helper;
 
 
     public void handleMessage(Message message) {
@@ -43,8 +38,14 @@ public class MessageService {
                 //return;
             //}
             //redisRepository.setKing(chatid, userFirstName);
-            //coreRepository.incrementPoints(chatid, userId, userFirstName);
-            telegramService.sendMessage(chatId, "\uD83C\uDF89 || Complimenti!\n\n\uD83D\uDC51 — "+message.getFrom().getFirst_name()+" sei il Re "+text.toUpperCase()+" di oggi!");
+
+
+            Long userId=message.getFrom().getId();
+            String userFirstName=message.getFrom().getFirst_name();
+            String cmd=text.toLowerCase();
+            coreRepository.incrementPoints(chatId, userId, cmd,  userFirstName);
+            String msg=translationManager.getMessage(chatId, "congrats")+userFirstName+translationManager.getMessage(chatId, "youare")+cmd+translationManager.getMessage(chatId, "oftoday");
+            telegramService.sendMessage(chatId,msg);
         }
         else if(text.startsWith("/lang")) {
             if(!telegramService.isUserAdmin(chatId, message.getFrom().getId())) return;
@@ -87,11 +88,10 @@ public class MessageService {
             }
         }
 
-        //if(redisRepository.canExecute(message.getChat().getId(), 20000)) {
-        //List<TopRecord> records = coreRepository.getTopRecords(message.getChat().getId());
-        //}
-
         else if(text.startsWith("/top")) {
+            //if(redisRepository.canExecute(message.getChat().getId(), 20000)) {
+            //List<TopRecord> records = coreRepository.getTopRecords(message.getChat().getId());
+            //}
             helper.genTop(chatId, 0, "/");
         }
     }
