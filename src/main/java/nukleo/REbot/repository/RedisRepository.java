@@ -3,6 +3,8 @@ package nukleo.REbot.repository;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.params.SetParams;
 
 import java.time.Duration;
 import java.time.ZoneId;
@@ -11,27 +13,27 @@ import java.util.Set;
 
 @Service
 public class RedisRepository {
-    private final JedisPool pool = new JedisPool("localhost", 6379);
+    private final JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost", 6379, 2000, null, 2);
 
-    public void setKing(Long chatId, String userFirstName) {
+    public boolean setKingIfAbsent(Long chatId, String userFirstName, String cmd) {
         try (Jedis jedis = pool.getResource()) {
-            String key = "king" + chatId;
-            jedis.set(key, userFirstName);
-
-            // Calculate seconds until next midnight
-            ZoneId zone = ZoneId.of("Europe/Rome");
-            ZonedDateTime now = ZonedDateTime.now(zone);
-            ZonedDateTime midnight = now.toLocalDate().plusDays(1).atStartOfDay(zone);
-            long secondsUntilMidnight = Duration.between(now, midnight).getSeconds();
-
-            // Set expiration
-            jedis.expire(key, (int) secondsUntilMidnight);
+            String key = "king_" + cmd + chatId;
+            long expireAt = ZonedDateTime.now(ZoneId.of("Europe/Rome"))
+                    .toLocalDate()
+                    .plusDays(1)
+                    .atStartOfDay(ZoneId.of("Europe/Rome"))
+                    .toEpochSecond();
+            if (jedis.setnx(key, userFirstName) == 1) {
+                jedis.expireAt(key, expireAt);
+                return true;
+            }
+            return false;
         }
     }
 
-    public String getKing(Long chatid){
+    public String getKing(Long chatid, String cmd){
         try (Jedis jedis = pool.getResource()) {
-            return jedis.get("king"+chatid);
+            return jedis.get("king_" + cmd + chatid);
         }
     }
 

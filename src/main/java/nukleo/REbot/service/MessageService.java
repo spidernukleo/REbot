@@ -31,22 +31,25 @@ public class MessageService {
         String text = message.getText();
         long chatId = message.getChat().getId();
         if(text==null) return;
+
         else if(commandsManager.getGroupCommands(chatId).contains(text.toLowerCase())){
-            //String king= redisRepository.getKing(chatid);
-            //if(king!=null){
-                //telegramService.sendMessage(message.getChat().getId(), "\uD83D\uDE2D || HEY\n\n\uD83D\uDC51 — "+king+" ha già preso il posto di Re Daniele di oggi");
-                //return;
-            //}
-            //redisRepository.setKing(chatid, userFirstName);
-
-
-            Long userId=message.getFrom().getId();
-            String userFirstName=message.getFrom().getFirst_name();
             String cmd=text.toLowerCase();
-            coreRepository.incrementPoints(chatId, userId, cmd,  userFirstName);
-            String msg=translationManager.getMessage(chatId, "congrats")+userFirstName+translationManager.getMessage(chatId, "youare")+cmd+translationManager.getMessage(chatId, "oftoday");
-            telegramService.sendMessage(chatId,msg);
+            String userFirstName=message.getFrom().getFirst_name();
+            if (!redisRepository.setKingIfAbsent(chatId, userFirstName, cmd)) {
+                String king = redisRepository.getKing(chatId, cmd);
+                telegramService.sendMessage(chatId,
+                        translationManager.getMessage(chatId, "hey") + king +
+                                translationManager.getMessage(chatId, "already") + cmd +
+                                translationManager.getMessage(chatId, "oftoday"));
+                return;
+            }
+            coreRepository.incrementPoints(chatId, message.getFrom().getId(), cmd, userFirstName);
+            telegramService.sendMessage(chatId,
+                    translationManager.getMessage(chatId, "congrats") + userFirstName +
+                            translationManager.getMessage(chatId, "youare") + cmd +
+                            translationManager.getMessage(chatId, "oftoday"));
         }
+
         else if(text.startsWith("/lang")) {
             if(!telegramService.isUserAdmin(chatId, message.getFrom().getId())) return;
             InlineKeyboardMarkup menu = genMenu(
@@ -89,10 +92,9 @@ public class MessageService {
         }
 
         else if(text.startsWith("/top")) {
-            //if(redisRepository.canExecute(message.getChat().getId(), 20000)) {
-            //List<TopRecord> records = coreRepository.getTopRecords(message.getChat().getId());
-            //}
-            helper.genTop(chatId, 0, "/");
+            if(redisRepository.canExecute(message.getChat().getId(), 20000)) {
+                helper.genTop(chatId, 0, "/");
+            }
         }
     }
 }

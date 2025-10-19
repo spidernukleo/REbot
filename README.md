@@ -16,3 +16,7 @@ export TELEGRAM_LOG_ID="987654321"
 ### Translations
 
 You can add a new .json file in `/resources/langs` and in the `loadTranslations()` method to add a new language
+
+### Requirements
+
+- `Redis Server` — **required** — you must have a redis server to which you can connect in `RedisRepository` class.
