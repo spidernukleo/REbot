@@ -10,6 +10,7 @@ import nukleo.REbot.util.TranslationManager;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static nukleo.REbot.model.InlineKeyboardButton.cb;
 import nukleo.REbot.util.CoreManager;
@@ -28,26 +29,31 @@ public class MessageService {
 
     public void handleMessage(Message message) {
         if(message.getChat().getType().equals("private")) return;
-        String text = message.getText();
-        long chatId = message.getChat().getId();
+        String text = message.getText() != null ? message.getText().toLowerCase() : null;
         if(text==null) return;
+        long chatId = message.getChat().getId();
 
-        else if(commandsManager.getGroupCommands(chatId).contains(text.toLowerCase())){
-            String cmd=text.toLowerCase();
+        Optional<Command> cmdOpt = commandsManager.getGroupCommands(chatId).stream()
+                .filter(c->c.getCmd().equals(text))
+                .findFirst();
+
+        if(cmdOpt.isPresent()){
             String userFirstName=message.getFrom().getFirst_name();
-            if (!redisRepository.setKingIfAbsent(chatId, userFirstName, cmd)) {
-                String king = redisRepository.getKing(chatId, cmd);
+            if (!redisRepository.setKingIfAbsent(chatId, userFirstName, text)) {
+                String king = redisRepository.getKing(chatId, text);
                 telegramService.sendMessage(chatId,
                         translationManager.getMessage(chatId, "hey") + king +
-                                translationManager.getMessage(chatId, "already") + cmd +
+                                translationManager.getMessage(chatId, "already") + text +
                                 translationManager.getMessage(chatId, "oftoday"));
                 return;
             }
-            coreRepository.incrementPoints(chatId, message.getFrom().getId(), cmd, userFirstName);
-            telegramService.sendMessage(chatId,
+            coreRepository.incrementPoints(chatId, message.getFrom().getId(), text, userFirstName);
+            telegramService.sendPhoto(chatId,
                     translationManager.getMessage(chatId, "congrats") + userFirstName +
-                            translationManager.getMessage(chatId, "youare") + cmd +
-                            translationManager.getMessage(chatId, "oftoday"));
+                            translationManager.getMessage(chatId, "youare") + text +
+                            translationManager.getMessage(chatId, "oftoday"),
+                    cmdOpt.get().getFile_id()
+            );
         }
 
         else if(text.startsWith("/lang")) {
@@ -62,12 +68,12 @@ public class MessageService {
         }
 
         else if(text.startsWith("/kings")) {
-            List<String> commands = commandsManager.getGroupCommands(chatId);
+            List<Command> commands = commandsManager.getGroupCommands(chatId);
             if(!commands.isEmpty()) {
                 InlineKeyboardButton[][] rows = commands.stream()
                         .map(cmd -> new InlineKeyboardButton[]{
-                                cb(cmd, "/info_"+cmd),                     // command button
-                                cb("❌", "/del_"+cmd)            // delete button with unique callback
+                                cb(cmd.getCmd(), "/info_"+cmd.getCmd()),                     // command button
+                                cb("❌", "/del_"+cmd.getCmd())            // delete button with unique callback
                         })
                         .toArray(InlineKeyboardButton[][]::new);
                 telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "kings"), genMenu(rows));
@@ -80,10 +86,12 @@ public class MessageService {
             Message repliedMessage = message.getReply_to_message();
             if(repliedMessage == null) telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "notreply"));
             else{
-                String command = repliedMessage.getText();
+                String command = repliedMessage.getCaption();
+                Photo photo = repliedMessage.getLargestPhoto();
                 if(command!=null && command.length()<10 && !command.startsWith("/")) {
                     if(command.contains(" ")) telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "nospaces"));
-                    else if(commandsManager.addChatCommand(chatId, command)) telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "setking"));
+                    else if (photo==null) telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "nophoto"));
+                    else if(commandsManager.addChatCommand(chatId, command, photo)) telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "setking"));
                     else telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "toomanycmds"));
                 }
                 else

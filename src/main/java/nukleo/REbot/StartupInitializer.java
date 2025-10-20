@@ -30,7 +30,7 @@ public class StartupInitializer implements CommandLineRunner {
 
         coreManager.createPointsTable();
 
-        //logService.pingOnline();
+        logService.pingOnline();
 
         System.out.println("✅ Startup complete!");
     }

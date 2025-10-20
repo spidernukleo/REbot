@@ -4,12 +4,9 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.params.SetParams;
 
-import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Set;
 
 @Service
 public class RedisRepository {
@@ -34,6 +31,12 @@ public class RedisRepository {
     public String getKing(Long chatid, String cmd){
         try (Jedis jedis = pool.getResource()) {
             return jedis.get("king_" + cmd + chatid);
+        }
+    }
+
+    public void removeKing(Long chatid, String cmd){
+        try (Jedis jedis = pool.getResource()) {
+            jedis.del("king_" + cmd + chatid);
         }
     }
 

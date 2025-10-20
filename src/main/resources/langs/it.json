@@ -1,5 +1,5 @@
 {
-  "welcome": "Salve, sono il master Re Primo \uD83D\uDD25\nVisualizza i tuoi re con /kings e impostane di nuovi rispondendo ad un messaggio /setking \uD83D\uDCDD, da quel momento, il primo del giorno a scrivere quella parola diventerà il Re.\n\nUsa /top per vedere le classifiche  \uD83D\uDD1D\nPer qualsiasi problema @nukleolimitatibot",
+  "welcome": "Salve, sono il master Re Primo \uD83D\uDD25\nVisualizza i tuoi re con /kings e impostane di nuovi rispondendo ad un foto messaggio /setking \uD83D\uDCDD, da quel momento, il primo del giorno a scrivere quella parola diventerà il Re.\n\nUsa /top per vedere le classifiche  \uD83D\uDD1D\nPer qualsiasi problema @nukleolimitatibot",
   "done": "Fatto!",
   "changelang": "Scegli la nuova lingua:",
   "setking": "Nuovo Re impostato correttamente \uD83D\uDD25",
@@ -8,7 +8,7 @@
   "kings": "I Re del gruppo:",
   "nospaces": "Il comando Re non può contenere spazi.",
   "toomanycmds": "Massimo di 5 Re già raggiunto.",
-  "toolong": "Il comando Re può essere di massimo 10 caratteri.",
+  "toolong": "Il comando Re può essere di massimo 10 caratteri e deve avere una foto.",
   "infocmd": "Premi sulla x per eliminare il comando.",
   "deletecmdinfo": "Sei sicuro di voler eliminare tutti i punti del comando re: ",
   "confirm": "Conferma ✅",
@@ -19,6 +19,7 @@
   "youare": " sei il Re ",
   "oftoday": " di oggi!",
   "hey": "\uD83D\uDE2D || HEY\n\n\uD83D\uDC51 — ",
-  "already": " ha già preso il posto di Re "
+  "already": " ha già preso il posto di Re ",
+  "nophoto": "Il messaggio in risposta deve contenere una foto."
 
 }

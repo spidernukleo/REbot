@@ -24,6 +24,23 @@ public class TelegramService {
     private final RestTemplate restTemplate = new RestTemplate();
 
 
+    public void sendPhoto(Long chatid, String caption, String fileId){
+        if(fileId==null || fileId.isEmpty()) sendMessage(chatid, caption);
+        else{
+            Map<String, Object> req = new HashMap<>();
+            req.put("chat_id", chatid);
+            req.put("photo", fileId);
+            req.put("parse_mode", "HTML");
+            if (caption != null) req.put("caption", caption);
+            try{
+                new RestTemplate().postForObject(botConfig.getTgUrl()+"/sendPhoto", req, String.class);
+            }catch(Exception e){
+                throw new RuntimeException("Error sending photo "+chatid +": "+e.getMessage());
+            }
+        }
+    }
+
+
     public void sendMessage(Long chatId, String text){
         this.sendMessage(chatId, text, null);
     }

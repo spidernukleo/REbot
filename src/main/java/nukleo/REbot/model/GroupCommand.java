@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class GroupCommand {
     private Long chatId;
-    private String command;
+    private Command command;
 }

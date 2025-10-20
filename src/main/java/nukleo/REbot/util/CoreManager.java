@@ -1,6 +1,7 @@
 package nukleo.REbot.util;
 
 import lombok.AllArgsConstructor;
+import nukleo.REbot.model.Command;
 import nukleo.REbot.model.InlineKeyboardButton;
 import nukleo.REbot.model.TopRecord;
 import nukleo.REbot.repository.CoreRepository;
@@ -22,14 +23,14 @@ public class CoreManager {
 
 
     public void genTop(long chatid, Integer messageid, String cmd){
-        List<String> commands = commandsManager.getGroupCommands(chatid);
+        List<Command> commands = commandsManager.getGroupCommands(chatid);
         if(!commands.isEmpty()){
-            if(cmd.equals("/")) cmd=commands.getFirst();
-            if(commands.contains(cmd)){
+            String cmdToCheck = cmd.equals("/") ? commands.getFirst().getCmd() : cmd;
+            if(commands.stream().anyMatch(c -> c.getCmd().equals(cmdToCheck))){
                 if(messageid!=0)
                     telegramService.editMessage(chatid, messageid, genTopText(cmd, chatid), genMenu(genTopMenu(commands, cmd)));
                 else
-                    telegramService.sendMessage(chatid, genTopText(commands.getFirst(), chatid), genMenu(genTopMenu(commands, cmd)));
+                    telegramService.sendMessage(chatid, genTopText(commands.getFirst().getCmd(), chatid), genMenu(genTopMenu(commands, cmdToCheck)));
             }
             else
                 telegramService.deleteMessage(chatid, messageid);
@@ -51,11 +52,11 @@ public class CoreManager {
         return top.toString();
     }
 
-    private InlineKeyboardButton[][] genTopMenu(List<String> commands, String currCmd){
+    private InlineKeyboardButton[][] genTopMenu(List<Command> commands, String currCmd){
         return new InlineKeyboardButton[][] {
                 commands.stream()
-                        .filter(cmd -> !cmd.equals(currCmd))
-                        .map(cmd -> cb(cmd, "/top_" + cmd))
+                        .filter(cmd -> !cmd.getCmd().equals(currCmd))
+                        .map(cmd -> cb(cmd.getCmd(), "/top_" + cmd.getCmd()))
                         .toArray(InlineKeyboardButton[]::new)
         };
     }

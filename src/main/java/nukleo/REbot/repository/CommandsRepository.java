@@ -1,5 +1,6 @@
 package nukleo.REbot.repository;
 
+import nukleo.REbot.model.Command;
 import nukleo.REbot.model.GroupCommand;
 import nukleo.REbot.model.GroupLanguage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class CommandsRepository {
 
     public void createCommandsTable(){
         try{
-            jdbc.execute(" CREATE TABLE IF NOT EXISTS commands ( chatId BIGINT NOT NULL, command VARCHAR(10) NOT NULL, UNIQUE (chatId, command)) ");
+            jdbc.execute(" CREATE TABLE IF NOT EXISTS commands ( chatId BIGINT NOT NULL, command VARCHAR(10) NOT NULL, file_id VARCHAR(255), UNIQUE (chatId, command)) ");
         }
         catch(Exception e){
             e.printStackTrace();
@@ -26,10 +27,10 @@ public class CommandsRepository {
 
     public List<GroupCommand> getAllGroupCommands(){
         try{
-            String sql = "SELECT chatId, command FROM commands";
+            String sql = "SELECT chatId, command, file_id FROM commands";
             return jdbc.query(sql, (rs, rowNum) -> new GroupCommand(
                     rs.getLong("chatId"),
-                    rs.getString("command")
+                    new Command(rs.getString("command"), rs.getString("file_id"))
             ));
         }
         catch(Exception e){
@@ -38,10 +39,10 @@ public class CommandsRepository {
         }
     }
 
-    public void addCommand(Long chatId, String command){
+    public void addCommand(Long chatId, Command command){
         try{
-            String sql = "INSERT OR IGNORE INTO commands (chatId, command) VALUES(?, ?)";
-            jdbc.update(sql, chatId, command);
+            String sql = "INSERT OR IGNORE INTO commands (chatId, command, file_id) VALUES(?, ?, ?)";
+            jdbc.update(sql, chatId, command.getCmd(), command.getFile_id());
         }
         catch(Exception e){
             e.printStackTrace();
