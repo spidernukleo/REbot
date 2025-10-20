@@ -3,7 +3,6 @@ package nukleo.REbot.util;
 
 import lombok.Data;
 import nukleo.REbot.model.GroupCommand;
-import nukleo.REbot.model.GroupLanguage;
 import nukleo.REbot.repository.CommandsRepository;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +19,8 @@ public class CommandsManager {
 
     private final Map<Long, List<String>> groupCommands = new HashMap<>();
 
+    private static final String FIRST_TIME_ADD_COMMAND = "primo";
+
     public void createCommandsTable(){
         commandsRepository.createCommandsTable();
     }
@@ -31,6 +32,12 @@ public class CommandsManager {
         }
     }
 
+    public void firstTimeAdd(Long chatid){
+        if(!groupCommands.containsKey(chatid)){
+            this.addChatCommand(chatid, FIRST_TIME_ADD_COMMAND);
+        }
+    }
+
     public boolean addChatCommand(Long chatId, String command){
         List<String> commands = groupCommands.computeIfAbsent(chatId, k -> new ArrayList<>());
         if(commands.size()>=5) return false;
@@ -39,10 +46,6 @@ public class CommandsManager {
         commandsRepository.addCommand(chatId, command);
         commands.add(command);
         return true;
-    }
-
-    private Integer countCommands(Long chatid){
-        return groupCommands.getOrDefault(chatid, List.of()).size();
     }
 
     public List<String> getGroupCommands(Long chatid){

@@ -61,7 +61,7 @@ public class MessageService {
             telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "changelang"), menu);
         }
 
-        else if(text.startsWith("/commands")) {
+        else if(text.startsWith("/kings")) {
             List<String> commands = commandsManager.getGroupCommands(chatId);
             if(!commands.isEmpty()) {
                 InlineKeyboardButton[][] rows = commands.stream()
@@ -75,7 +75,7 @@ public class MessageService {
             else telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "nocmds"));
         }
 
-        else if(text.equals("/setking")) {
+        else if(text.startsWith("/setking")) {
             if(!telegramService.isUserAdmin(chatId, message.getFrom().getId())) return;
             Message repliedMessage = message.getReply_to_message();
             if(repliedMessage == null) telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "notreply"));

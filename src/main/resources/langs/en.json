@@ -1,5 +1,5 @@
 {
-  "welcome": "Hello — I'm Master First King \uD83D\uDD25\nView your kings with /commands and set new ones by replying to a message with /setking \uD83D\uDCDD; from then on, the first person each day to write that word will become the King.\n\nUse /top to see the rankings  \uD83D\uDD1D\nFor any issues @nukleolimitatibot",
+  "welcome": "Hello — I'm Master First King \uD83D\uDD25\nView your kings with /kings and set new ones by replying to a message with /setking \uD83D\uDCDD; from then on, the first person each day to write that word will become the King.\n\nUse /top to see the rankings  \uD83D\uDD1D\nFor any issues @nukleolimitatibot",
   "done": "Done!",
   "changelang": "Choose the new language:",
   "setking": "New King set successfully \uD83D\uDD25",

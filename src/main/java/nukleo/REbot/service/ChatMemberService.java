@@ -4,7 +4,6 @@ package nukleo.REbot.service;
 import lombok.AllArgsConstructor;
 import nukleo.REbot.model.ChatMemberUpdate;
 import nukleo.REbot.repository.CoreRepository;
-import nukleo.REbot.repository.LanguageRepository;
 import nukleo.REbot.util.CommandsManager;
 import nukleo.REbot.util.TranslationManager;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class ChatMemberService {
 
-    private final CoreRepository coreRepository;
     private final TelegramService telegramService;
     private final LogService logService;
     private final TranslationManager translationManager;
@@ -31,6 +29,7 @@ public class ChatMemberService {
         }
 
         translationManager.addChatLanguage(chatId);
+        commandsManager.firstTimeAdd(chatId);
         telegramService.sendMessage(chatId, translationManager.getMessage(chatId, "welcome"));
         logService.logAddChat(member);
     }
