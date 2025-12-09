@@ -47,3 +47,4 @@ out/
 application-secrets.properties
 
 database.db
+mydb.db
