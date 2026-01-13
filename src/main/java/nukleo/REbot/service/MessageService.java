@@ -99,7 +99,7 @@ public class MessageService {
             }
         }
 
-        else if(text.startsWith("/top")) {
+        else if(text.equals("/top") || text.equals("/top@masterkingfirstbot")) {
             if(redisRepository.canExecute(message.getChat().getId(), 20000)) {
                 helper.genTop(chatId, 0, "/");
             }
